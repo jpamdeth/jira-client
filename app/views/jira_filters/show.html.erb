@@ -1,0 +1,68 @@
+<!-- app/views/jira_filters/show.html.erb -->
+<h1>Issues for Filter: <%= @filter.name %></h1>
+
+<% if @issues.present? %>
+  <style>
+      table, th, td {
+          border: 1px solid;
+          border-collapse: collapse;
+          padding: 5px;
+      }
+  </style>
+  <table>
+    <tr>
+      <th>Assignee</th>
+      <th>Type</th>
+      <th>Key</th>
+      <th>Summary</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Resolution</th>
+      <th>Story Points</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Elapsed Time</th>
+      <th>Miss</th>
+    </tr>
+
+    <% @issues.each do |issue|
+      if issue.customfield_19880.present? && issue.customfield_19971.present?
+        start_date = Date.parse(issue.customfield_19880)
+        end_date = Date.parse(issue.customfield_19971)
+        duration = 0
+
+        while start_date < end_date
+          unless start_date.saturday? || start_date.sunday?
+            duration += 1
+          end
+          start_date += 1
+        end
+
+        if issue.customfield_10004.present?
+          miss = duration - issue.customfield_10004
+        end
+      end
+    %>
+      <tr>
+        <td><%= issue.assignee&.displayName %></td>
+        <td><%= issue.issuetype.name %></td>
+        <td><%= issue.key %></td>
+        <td><%= issue.summary %></td>
+        <td><%= issue.priority.name %></td>
+        <td><%= issue.status.name %></td>
+        <td><%= issue.resolution["name"] %></td>
+        <td><%= issue.customfield_10004 %></td>
+        <td><%= issue.customfield_19880 %></td>
+        <td><%= issue.customfield_19971 %></td>
+        <td><%= duration %></td>
+        <td><%= miss %></td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <p>No issues found for this filter.</p>
+<% end %>
+
+<% if @error.present? %>
+  <p style="color: red;"><%= @error %></p>
+<% end %>
