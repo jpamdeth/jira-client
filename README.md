@@ -1,24 +1,23 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
 * Ruby version
 
-* System dependencies
+3.2.4
 
 * Configuration
 
-* Database creation
+Generate a JIRA API token that has read access.
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
+Create '.env' in the top level directory with these keys:
+JIRA_SITE=
+JIRA_USERNAME=
+JIRA_API_TOKEN=
 
 * Deployment instructions
 
-* ...
+Use 'rails server' to start the service.  By default it runs on http://127.0.0.1:3000
+
+URLs:
+http://127.0.0.1:3000/jira_issues  :  Lists your assigned tickets and provides links to more details
+
+http://127.0.0.1:3000/jira_filters  :  List your created filters anad links to the matching tickets
