@@ -1,100 +1,99 @@
-<h1><%= @team %> Issues</h1>
+<h1>Issues</h1>
 <% if @error %>
   <p style="color: red;"><%= @error %></p>
-<% else %>
-  <style>
-      table, th, td {
-          border: 1px solid;
-          border-collapse: collapse;
-          padding: 5px;
-      }
-      .inline-form div {
-          display: inline-block;
-          margin-right: 10px;
-          vertical-align: top;
-          margin-bottom: 15px;
-      }
-      .inline-form label {
-          display: block;
-          vertical-align: top;
-      }
-  </style>
+<% end %>
+<style>
+    table, th, td {
+        border: 1px solid;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+    .inline-form div {
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: top;
+        margin-bottom: 15px;
+    }
+    .inline-form label {
+        display: block;
+        vertical-align: top;
+    }
+</style>
 
-  <%= form_with url: jira_team_index_path, method: :get, local: true, html: { class: 'inline-form' } do %>
-    <div>
-      <label for="project_key">Project:</label>
-      <%= select_tag :project_key, options_for_select([%w[Support-views Support-views], %w[Ingest Ingest]], params[:project_key]), multiple: true %>
-    </div>
-    <div>
-      <label for="status">Status:</label>
-      <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], ['Resolved', 'Resolved']], params[:status]), multiple: true %>
-    </div>
-    <div>
-      <label for="created">Created:</label>
-      <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:created]) %>
-    </div>
-    <div>
-      <label for="updated">Updated:</label>
-      <%= select_tag :updated, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:updated]) %>
-    </div>
-    <div>
-      <label for="resolved">Resolved:</label>
-      <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:resolved]) %>
-    </div>
-    <div>
-      <%= submit_tag "Search" %>
-    </div>
-  <% end %>
-  <% unless @issues.nil? %>
-  <table>
-    <tr>
-      <th>Assignee</th>
-      <th>Type</th>
-      <th>Key</th>
-      <th>Summary</th>
-      <th>Priority</th>
-      <th>Status</th>
-      <th>Resolution</th>
-      <th>Story Points</th>
-      <th>Start Date</th>
-      <th>End Date</th>
-      <th>Elapsed Time</th>
-      <th>Miss</th>
-    </tr>
+<%= form_with url: jira_team_index_path, method: :get, local: true, html: { class: 'inline-form' } do %>
+  <div>
+    <label for="project_key">Project:</label>
+    <%= select_tag :project_key, options_for_select([%w[Support-views Support-views], %w[Ingest Ingest]], params[:project_key]), multiple: true %>
+  </div>
+  <div>
+    <label for="status">Status:</label>
+    <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], ['Resolved', 'Resolved']], params[:status]), multiple: true %>
+  </div>
+  <div>
+    <label for="created">Created:</label>
+    <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:created]) %>
+  </div>
+  <div>
+    <label for="updated">Updated:</label>
+    <%= select_tag :updated, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:updated]) %>
+  </div>
+  <div>
+    <label for="resolved">Resolved:</label>
+    <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:resolved]) %>
+  </div>
+  <div>
+    <%= submit_tag "Search" %>
+  </div>
+<% end %>
+<% unless @issues.nil? %>
+<table>
+  <tr>
+    <th>Assignee</th>
+    <th>Type</th>
+    <th>Key</th>
+    <th>Summary</th>
+    <th>Priority</th>
+    <th>Status</th>
+    <th>Resolution</th>
+    <th>Story Points</th>
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th>Elapsed Time</th>
+    <th>Miss</th>
+  </tr>
 
-    <% @issues.each do |issue|
-      if issue.customfield_19880.present? && issue.customfield_19971.present?
-        start_date = Date.parse(issue.customfield_19880)
-        end_date = Date.parse(issue.customfield_19971)
-        duration = 0
+  <% @issues.each do |issue|
+    if issue.customfield_19880.present? && issue.customfield_19971.present?
+      start_date = Date.parse(issue.customfield_19880)
+      end_date = Date.parse(issue.customfield_19971)
+      duration = 0
 
-        while start_date < end_date
-          unless start_date.saturday? || start_date.sunday?
-            duration += 1
-          end
-          start_date += 1
+      while start_date < end_date
+        unless start_date.saturday? || start_date.sunday?
+          duration += 1
         end
-
-        if issue.customfield_10004.present?
-          miss = duration - issue.customfield_10004
-        end
+        start_date += 1
       end
-    %>
-      <tr>
-        <td><%= issue.assignee&.displayName %></td>
-        <td><%= issue.issuetype.name %></td>
-        <td><%= link_to issue.key, jira_issue_path(issue.key) %></td>
-        <td><%= issue.summary %></td>
-        <td><%= issue.priority.name %></td>
-        <td><%= issue.status.name %></td>
-        <td><%= issue.resolution&.dig("name") %></td>
-        <td><%= issue.customfield_10004 %></td>
-        <td><%= issue.customfield_19880 %></td>
-        <td><%= issue.customfield_19971 %></td>
-        <td><%= duration %></td>
-        <td><%= miss %></td>
-      </tr>
-    <% end %>
-  </table>
+
+      if issue.customfield_10004.present?
+        miss = duration - issue.customfield_10004
+      end
+    end
+  %>
+    <tr>
+      <td><%= issue.assignee&.displayName %></td>
+      <td><%= issue.issuetype.name %></td>
+      <td><%= link_to issue.key, jira_issue_path(issue.key) %></td>
+      <td><%= issue.summary %></td>
+      <td><%= issue.priority.name %></td>
+      <td><%= issue.status.name %></td>
+      <td><%= issue.resolution&.dig("name") %></td>
+      <td><%= issue.customfield_10004 %></td>
+      <td><%= issue.customfield_19880 %></td>
+      <td><%= issue.customfield_19971 %></td>
+      <td><%= duration %></td>
+      <td><%= miss %></td>
+    </tr>
   <% end %>
+</table>
 <% end %>

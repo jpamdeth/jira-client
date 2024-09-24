@@ -1,4 +1,4 @@
-<h1>Team Jira Issues</h1>
+<h1>My Jira Issues</h1>
 
 <% if @error %>
   <p style="color: red;"><%= @error %></p>
@@ -51,7 +51,7 @@
         <td><%= issue.summary %></td>
         <td><%= issue.priority.name %></td>
         <td><%= issue.status.name %></td>
-        <td><%= issue.resolution&["name"] %></td>
+        <td><%= issue.resolution&.dig("name") %></td>
         <td><%= issue.customfield_10004 %></td>
         <td><%= issue.customfield_19880 %></td>
         <td><%= issue.customfield_19971 %></td>

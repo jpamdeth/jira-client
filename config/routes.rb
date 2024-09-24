@@ -21,5 +21,5 @@ Rails.application.routes.draw do
   resources :jira_team, only: [ :index ]
 
   # Defines the root path route ("/")
-  root "jira_issues#index"
+  root "jira_team#index"
 end
