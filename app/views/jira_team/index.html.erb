@@ -1,5 +1,4 @@
-<h1>Team Jira Issues</h1>
-
+<h1><%= @team %> Issues</h1>
 <% if @error %>
   <p style="color: red;"><%= @error %></p>
 <% else %>
@@ -9,7 +8,44 @@
           border-collapse: collapse;
           padding: 5px;
       }
+      .inline-form div {
+          display: inline-block;
+          margin-right: 10px;
+          vertical-align: top;
+          margin-bottom: 15px;
+      }
+      .inline-form label {
+          display: block;
+          vertical-align: top;
+      }
   </style>
+
+  <%= form_with url: jira_team_index_path, method: :get, local: true, html: { class: 'inline-form' } do %>
+    <div>
+      <label for="project_key">Project:</label>
+      <%= select_tag :project_key, options_for_select([%w[Support-views Support-views], %w[Ingest Ingest]], params[:project_key]), multiple: true %>
+    </div>
+    <div>
+      <label for="status">Status:</label>
+      <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], ['Resolved', 'Resolved']], params[:status]), multiple: true %>
+    </div>
+    <div>
+      <label for="created">Created:</label>
+      <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:created]) %>
+    </div>
+    <div>
+      <label for="updated">Updated:</label>
+      <%= select_tag :updated, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:updated]) %>
+    </div>
+    <div>
+      <label for="resolved">Resolved:</label>
+      <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:resolved]) %>
+    </div>
+    <div>
+      <%= submit_tag "Search" %>
+    </div>
+  <% end %>
+  <% unless @issues.nil? %>
   <table>
     <tr>
       <th>Assignee</th>
@@ -51,7 +87,7 @@
         <td><%= issue.summary %></td>
         <td><%= issue.priority.name %></td>
         <td><%= issue.status.name %></td>
-        <td><%= issue.resolution&["name"] %></td>
+        <td><%= issue.resolution&.dig("name") %></td>
         <td><%= issue.customfield_10004 %></td>
         <td><%= issue.customfield_19880 %></td>
         <td><%= issue.customfield_19971 %></td>
@@ -60,4 +96,5 @@
       </tr>
     <% end %>
   </table>
+  <% end %>
 <% end %>

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "jira_team/index"
   get "jira_filters/index"
   get "jira_filters/show"
   get "jira_issues/index"
@@ -17,6 +18,7 @@ Rails.application.routes.draw do
 
   resources :jira_issues, only: [ :index, :show, :new, :create ]
   resources :jira_filters, only: [ :index, :show ]
+  resources :jira_team, only: [ :index ]
 
   # Defines the root path route ("/")
   root "jira_issues#index"
