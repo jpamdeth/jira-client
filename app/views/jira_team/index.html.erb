@@ -23,28 +23,43 @@
 <%= form_with url: jira_team_index_path, method: :get, local: true, html: { class: 'inline-form' } do %>
   <div>
     <label for="project_key">Project:</label>
-    <%= select_tag :project_key, options_for_select([%w[Support-views Support-views], %w[Ingest Ingest]], params[:project_key]), multiple: true %>
+    <%= select_tag :project_key, options_for_select([%w[Support-views Support-views], %w[Ingest Ingest], %w[Support-Views-UI Support-Views-UI]], params[:project_key]), multiple: true %>
   </div>
   <div>
     <label for="status">Status:</label>
-    <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], ['Resolved', 'Resolved']], params[:status]), multiple: true %>
+    <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], %w[Resolved Resolved], %w[Blocked Blocked]], params[:status]), multiple: true, id: 'status' %>
   </div>
   <div>
     <label for="created">Created:</label>
-    <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:created]) %>
+    <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:created]) %>
   </div>
   <div>
     <label for="updated">Updated:</label>
-    <%= select_tag :updated, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:updated]) %>
+    <%= select_tag :updated, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:updated]) %>
   </div>
   <div>
     <label for="resolved">Resolved:</label>
-    <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['90', '90']], params[:resolved]) %>
+    <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:resolved]), id: 'resolved' %>
   </div>
   <div>
     <%= submit_tag "Search" %>
   </div>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('status');
+    const resolvedSelect = document.getElementById('resolved');
+
+    function toggleResolvedSelect() {
+      const selectedOptions = Array.from(statusSelect.selectedOptions).map(option => option.value);
+      resolvedSelect.disabled = !selectedOptions.includes('Resolved');
+    }
+
+    statusSelect.addEventListener('change', toggleResolvedSelect);
+    toggleResolvedSelect(); // Initial check
+  });
+</script>
 <% unless @issues.nil? %>
 <table>
   <tr>
