@@ -1,4 +1,5 @@
 class JiraTeamController < ApplicationController
+  include ApplicationHelper
   def index
     begin
       teams = Array(params[:project_key])
@@ -40,5 +41,10 @@ class JiraTeamController < ApplicationController
     rescue => e
       @error = e.message
     end
+  end
+  def show
+    @issue = get_ticket(params[:id])
+  rescue => e
+    redirect_to jira_team_index_path, alert: e.message
   end
 end

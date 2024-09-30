@@ -98,7 +98,7 @@
     <tr>
       <td><%= issue.assignee&.displayName %></td>
       <td><%= issue.issuetype.name %></td>
-      <td><%= link_to issue.key, jira_issue_path(issue.key) %></td>
+      <td><%= link_to issue.key, jira_team_path(issue.key) %></td>
       <td><%= issue.summary %></td>
       <td><%= issue.priority.name %></td>
       <td><%= issue.status.name %></td>

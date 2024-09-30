@@ -1,5 +1,5 @@
 <h1>Issue <%= @issue.key %></h1>
-<%= link_to 'Back to Issues', jira_issues_path %>
+<%= link_to 'Back to Team', jira_team_index_path %>
 
 <p><strong>Summary:</strong> <%= @issue.fields['summary'] %></p>
 <p><strong>Assignee:</strong> <%= @issue.fields.dig('assignee')&.dig('displayName') %></p>
