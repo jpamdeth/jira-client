@@ -15,6 +15,6 @@ module ApplicationHelper
 
   def format_links(text)
     return "" if text.nil?
-    text.gsub(/\[(.*?)\|(.*?)\]/, '<a href="\2">\1</a>').html_safe
+    text.gsub(/\[(.*?)\|(.*?)\]/, '<a href="\2" target="_blank">\1</a>').html_safe
   end
 end

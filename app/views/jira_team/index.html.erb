@@ -29,6 +29,10 @@
     <label for="status">Status:</label>
     <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], %w[Resolved Resolved], %w[Blocked Blocked]], params[:status]), multiple: true, id: 'status' %>
   </div>
+  <div id="resolution-container" class="hidden">
+    <label for="resolution">Resolution:</label>
+    <%= select_tag :resolution, options_for_select([['Done', 'Done'], ['Cancelled', 'Cancelled '], ["Won't Do", "Won't Do"]], params[:resolution]), multiple: true, id: 'resolution' %>
+  </div>
   <div>
     <label for="created">Created:</label>
     <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:created]) %>
@@ -40,6 +44,14 @@
   <div>
     <label for="resolved">Resolved:</label>
     <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:resolved]), id: 'resolved' %>
+  </div>
+  <div>
+    <label for="unassigned">Unassigned</label>
+    <%= check_box_tag :unassigned, '1', params[:unassigned] == '1' %>
+  </div>
+  <div>
+    <label for="unpointed">Unpointed</label>
+    <%= check_box_tag :unpointed, '1', params[:unpointed] == '1' %>
   </div>
   <div>
     <%= submit_tag "Search" %>
@@ -59,8 +71,26 @@
     statusSelect.addEventListener('change', toggleResolvedSelect);
     toggleResolvedSelect(); // Initial check
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const statusSelect = document.getElementById('status');
+      const resolutionContainer = document.getElementById('resolution-container');
+
+      function toggleResolutionContainer() {
+          const selectedOptions = Array.from(statusSelect.selectedOptions).map(option => option.value);
+          if (selectedOptions.includes('Resolved')) {
+              resolutionContainer.classList.remove('hidden');
+          } else {
+              resolutionContainer.classList.add('hidden');
+          }
+      }
+
+      statusSelect.addEventListener('change', toggleResolutionContainer);
+      toggleResolutionContainer(); // Initial check
+  });
 </script>
 <% unless @issues.nil? %>
+<p>Total Issues: <%= @issues.size %></p>
 <table>
   <tr>
     <th>Assignee</th>
