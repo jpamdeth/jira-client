@@ -1,13 +1,7 @@
 Rails.application.routes.draw do
-  get "jira_team/index"
-  get "jira_team/show"
+  get "github/repo"
+  get "github/team"
   get "jira_team/stats"
-  get "jira_filters/index"
-  get "jira_filters/show"
-  get "jira_issues/index"
-  get "jira_issues/show"
-  get "jira_issues/new"
-  get "jira_issues/create"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -20,7 +14,7 @@ Rails.application.routes.draw do
 
   resources :jira_issues, only: [ :index, :show, :new, :create ]
   resources :jira_filters, only: [ :index, :show ]
-  resources :jira_team, only: [ :index, :show, :stats ]
+  resources :jira_team, only: [ :index, :show ]
 
   # Defines the root path route ("/")
   root "jira_team#index"

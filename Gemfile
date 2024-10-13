@@ -19,6 +19,9 @@ gem "jbuilder"
 
 gem "jira-ruby"
 
+gem "faraday"
+gem "faraday_middleware"
+
 gem "dotenv-rails"
 
 # Use Redis adapter to run Action Cable in production

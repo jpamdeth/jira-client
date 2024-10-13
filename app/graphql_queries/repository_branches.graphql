@@ -1,0 +1,33 @@
+query {
+  repository(owner: "__OWNER__", name: "__NAME__") {
+    refs(refPrefix: "refs/heads/", first: 100, after: "__AFTER__") {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      edges {
+        node {
+          name
+          target {
+            ... on Commit {
+              history(first: 1) {
+                edges {
+                  node {
+                    committer {
+                      name
+                      email
+                      user {
+                        login
+                      }
+                    }
+                    committedDate
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

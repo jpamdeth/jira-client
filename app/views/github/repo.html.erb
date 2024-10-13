@@ -1,0 +1,37 @@
+<% if @error %>
+  <p style="color: red;"><%= @error %></p>
+<% else %>
+<h1>Github Repo Information for: <%= link_to @repo.name, @repo.html_url, target: "_blank" %></h1>
+<p>Branches URL: <%= @repo.branches_url %></p>
+<p>Pulls URL: <%= @repo.pulls_url %></p>
+<p>Teams URL: <%= @repo.teams_url %></p>
+
+<style>
+    table, th, td {
+        border: 1px solid;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+</style>
+<h2>Branches</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Author Email</th>
+      <th>Commit Date</th>
+      <th>Employee</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @branches.each do |name, branch| %>
+      <tr>
+        <td><%= branch.name %></td>
+        <td><%= branch.author_email %></td>
+        <td><%= branch.commit_date %></td>
+        <td><%= branch.employee %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>

@@ -1,0 +1,28 @@
+<h1>Team Members</h1>
+
+<% if @members.present? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Login</th>
+        <th>ID</th>
+        <th>Node ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @members.each do |member| %>
+        <tr>
+          <td><%= member.name %></td>
+          <td><%= member.email %></td>
+          <td><%= member.login %></td>
+          <td><%= member.id %></td>
+          <td><%= member.node_id %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No members found.</p>
+<% end %>
