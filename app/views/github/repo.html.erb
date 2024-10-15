@@ -26,7 +26,7 @@
   <tbody>
     <% @branches.each do |name, branch| %>
       <tr>
-        <td><%= branch.name %></td>
+        <td><%= link_to branch.name, @repo.html_url + "/tree/" + branch.name, target: "_blank" %></td>
         <td><%= branch.author_email %></td>
         <td><%= branch.commit_date %></td>
         <td><%= branch.employee %></td>

@@ -3,7 +3,7 @@ class GithubController < ApplicationController
     begin
       name = params[:repo]
       @repo = Repository.new(name: name).fetch_from_github
-      @branches = @repo.fetch_branch_data
+      @branches = @repo.fetch_branches_graphql
     rescue => e
       @error = e.message
     end

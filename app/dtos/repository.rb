@@ -27,25 +27,43 @@ class Repository
     self
   end
 
-  def fetch_branch_data
+  def fetch_branches
+    url = ("/repos/#{@owner}/#{@name}/branches")
+    branches = []
+    results = GithubClient.fetch_all_pages(url)
+    results.map do |branch_info|
+      branch = Branch.new(
+        name: branch_info["name"],
+        repo: @name,
+        owner: @owner
+      )
+      branch.author_email = branch_info["commit"]["commit"]["author"]["email"]
+      branch.commit_date = branch_info["commit"]["commit"]["author"]["date"]
+      branch.employee = Organization.instance.members.include?(branch_info["commit"]["commit"]["author"]["login"])
+      branches << branch
+    end
+
+    branches
+  end
+
+  def fetch_branches_graphql
     query_template = File.read(Rails.root.join("app", "graphql_queries", "repository_branches.graphql"))
     query = query_template.gsub("__OWNER__", @owner).gsub("__NAME__", @name)
 
-    branch_data = GithubClient.fetch_all_graphql(query, ["repository", "refs", "edges"])
+    branch_data = GithubClient.fetch_all_graphql(query, %w[repository refs edges])
 
     branches = {}
     branch_data.each do |branch_info|
       branch_name = branch_info.dig("node", "name")
       committer_login = branch_info.dig("node", "target", "history", "edges", 0, "node", "committer", "user", "login")
       employee = Organization.instance.members.include?(committer_login)
-      branch = Branch.new(
-        name: branch_name,
-        repository_name: @name,
-        owner: @owner,
-        author_email: branch_info.dig("node", "target", "history", "edges", 0, "node", "committer", "email"),
-        commit_date: branch_info.dig("node", "target", "history", "edges", 0, "node", "committedDate"),
-        employee: employee
-      )
+      branch = Branch.new
+      branch.name = branch_name
+      branch.repo = @name
+      branch.owner = @owner
+      branch.author_email = branch_info.dig("node", "target", "history", "edges", 0, "node", "committer", "email")
+      branch.commit_date = branch_info.dig("node", "target", "history", "edges", 0, "node", "committedDate")
+      branch.employee = employee
       branches[branch_name] = branch
     end
 
