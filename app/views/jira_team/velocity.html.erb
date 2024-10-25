@@ -1,0 +1,32 @@
+<h1>Tickets Closed in 14-Day Buckets</h1>
+
+<% if @buckets.present? %>
+  <% total_tickets = 0 %>
+  <% @buckets.each do |end_date, issues| %>
+    <% total_tickets += issues.size %>
+    <% total_points = 0 %>
+    <% unpointed_tickets = 0 %>
+    <% issues.each do |issue| %>
+      <% story_points = issue.fields['customfield_10004'].presence || "unpointed" %>
+      <% if story_points == "unpointed" %>
+        <% unpointed_tickets += 1 %>
+      <% else %>
+        <% total_points += story_points.to_i %>
+      <% end %>
+    <% end %>
+    <h2>End Date: <%= end_date.strftime('%m/%d/%Y') %> - Total Tickets: <%= issues.size %> - Total Points: <%= total_points %> - Unpointed Tickets: <%= unpointed_tickets %></h2>
+    <ul>
+      <% issues.each do |issue| %>
+        <li>
+          <strong>Issue ID:</strong> <%= issue.id %> -
+          <strong>Resolution Date:</strong> <%= Date.parse(issue.fields['resolutiondate']).strftime('%m/%d/%Y') %> -
+          <strong>Story Points:</strong> <%= issue.fields['customfield_10004'].presence || "unpointed" %> -
+          <strong>Summary:</strong> <%= issue.fields['summary'] %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <h2>Total Tickets Across All Buckets: <%= total_tickets %></h2>
+<% else %>
+  <p>No tickets found.</p>
+<% end %>

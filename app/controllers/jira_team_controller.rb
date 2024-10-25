@@ -86,4 +86,40 @@ class JiraTeamController < ApplicationController
   rescue => e
     redirect_to jira_team_index_path, alert: e.message
   end
+
+  def velocity
+    begin
+      team = params[:project_key]
+
+      if team.nil?
+        @error = "Please select a team"
+      else
+        jql_conditions = []
+        jql_conditions << "project = \"#{team}\""
+        jql_conditions << "resolutiondate >= startOfDay(-168d)"
+        jql_conditions << "statusCategory = Done"
+        jql_conditions << "resolution = Done"
+        jql_conditions << "issuetype NOT IN (Epic)"
+        jql = jql_conditions.join(" AND ") + " ORDER BY resolutiondate"
+        start_at = 0
+        max_results = 100
+        all_issues = []
+
+        loop do
+          issues = JIRA_CLIENT.Issue.jql(jql, fields: %w[summary assignee issuetype priority resolutiondate resolution customfield_10004 customfield_19880 customfield_19971], start_at: start_at, max_results: max_results)
+          all_issues.concat(issues)
+          break if issues.size < max_results || all_issues.size >= 1000
+          start_at += max_results
+        end
+
+        if all_issues.size >= 1000
+          @error = "A maximum of 1000 issues can be returned. Please refine your search."
+        end
+
+        @buckets = JiraTeamHelper.bucket_tickets_by_14_day_chunks(all_issues)
+      end
+    rescue => e
+      @error = e.message
+    end
+  end
 end

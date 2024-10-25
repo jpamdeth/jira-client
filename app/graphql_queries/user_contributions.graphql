@@ -1,0 +1,58 @@
+query {
+  user(login: "__LOGIN__") {
+    login
+    contributionsCollection {
+      pullRequestContributions(first: 50) {
+        nodes {
+          pullRequest {
+            title
+            repository {
+              name
+            }
+            changedFiles
+            files(first: 100) {
+              nodes {
+                additions
+                deletions
+              }
+            }
+            isDraft
+            reviewDecision
+            createdAt
+            state
+            merged
+            mergedAt
+            closed
+            closedAt
+            url
+          }
+        }
+      }
+      pullRequestReviewContributions(first: 50) {
+        nodes {
+          pullRequestReview {
+            repository {
+              name
+            }
+            pullRequest {
+              title
+              author {
+                login
+              }
+            }
+            body
+            state
+            comments(first: 10) {
+              nodes {
+                body
+                url
+              }
+            }
+            createdAt
+            url
+          }
+        }
+      }
+    }
+  }
+}

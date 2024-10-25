@@ -1,30 +1,33 @@
 class Member
-  attr_accessor :name, :email, :login, :id, :node_id
+  attr_accessor :name, :email, :login, :id, :url
 
   def initialize(attributes = {})
-    @name = attributes["name"]
-    @email = attributes["email"]
     @login = attributes["login"]
     @id = attributes["id"]
-    @node_id = attributes["node_id"]
   end
 
-  def self.fetch_from_github(org: "zendesk", team:)
-    page = 1
+  def self.fetch_team(team, org = "zendesk")
     members = []
-
-    loop do
-      response = GithubClient.get_page("/orgs/#{org}/teams/#{team}/members", page)
-      break if response.body.empty?
-
-      response.body.each do |member_data|
-        members << new(member_data)
-      end
-
-      break if response.body.size < 100 # Break if fewer than 100 results are returned
-      page += 1
+    response = GithubClient.fetch_all_pages("/orgs/#{org}/teams/#{team}/members")
+    response.map do |member_info|
+      query_template = File.read(Rails.root.join("app", "graphql_queries", "user.graphql"))
+      query = query_template.gsub("__LOGIN__", member_info["login"])
+      response = GithubClient.fetch_graphql(query, %w[user])
+      member = Member.new
+      member.login = member_info["login"]
+      member.id = response["id"]
+      member.email = response["email"]
+      member.name = response["name"]
+      member.url = response["url"]
+      members << member
     end
-
     members
+  end
+
+  def self.fetch_contributions(login)
+    query_template = File.read(Rails.root.join("app", "graphql_queries", "user_contributions.graphql"))
+    query = query_template.gsub("__LOGIN__", login)
+
+    contributions = GithubClient.fetch_graphql(query, %w[user contributionsCollection])
   end
 end

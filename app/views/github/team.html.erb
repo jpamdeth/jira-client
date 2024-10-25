@@ -1,24 +1,31 @@
 <h1>Team Members</h1>
 
 <% if @members.present? %>
+  <style>
+      table, th, td {
+          border: 1px solid;
+          border-collapse: collapse;
+          padding: 5px;
+      }
+  </style>
   <table>
     <thead>
       <tr>
         <th>Name</th>
-        <th>Email</th>
         <th>Login</th>
         <th>ID</th>
-        <th>Node ID</th>
+        <th>GitHub URL</th>
+        <th>Contributions</th>
       </tr>
     </thead>
     <tbody>
       <% @members.each do |member| %>
         <tr>
           <td><%= member.name %></td>
-          <td><%= member.email %></td>
           <td><%= member.login %></td>
           <td><%= member.id %></td>
-          <td><%= member.node_id %></td>
+          <td><a href="<%= member.url %>" target="_blank"><%= member.url %></a></td>
+          <td><a href="<%= contributions_path(login: member.login) %>" target="_blank">Contributions</a></td>
         </tr>
       <% end %>
     </tbody>

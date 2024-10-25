@@ -1,0 +1,7 @@
+query {
+  user (login: "__LOGIN__") {
+    name
+    id
+    url
+  }
+}

@@ -1,0 +1,84 @@
+<% if @contributions %>
+  <style>
+      table, th, td {
+          border: 1px solid;
+          border-collapse: collapse;
+          padding: 5px;
+      }
+  </style>
+  <h2>Last 50 Pull Requests</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Repository</th>
+      <th>Changed Files</th>
+      <th>Additions</th>
+      <th>Deletions</th>
+      <th>Is Draft</th>
+      <th>Review Decision</th>
+      <th>Created At</th>
+      <th>State</th>
+      <th>Merged</th>
+      <th>Merged At</th>
+      <th>Closed</th>
+      <th>Closed At</th>
+      <th>URL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @contributions["pullRequestContributions"]["nodes"].each do |contribution| %>
+      <% pull_request = contribution["pullRequest"] %>
+      <tr>
+        <td><%= pull_request["title"] %></td>
+        <td><%= pull_request["repository"]["name"] %></td>
+        <td><%= pull_request["changedFiles"] %></td>
+        <td><%= pull_request["files"]["nodes"].sum { |file| file["additions"] } %></td>
+        <td><%= pull_request["files"]["nodes"].sum { |file| file["deletions"] } %></td>
+        <td><%= pull_request["isDraft"] %></td>
+        <td><%= pull_request["reviewDecision"] %></td>
+        <td><%= pull_request["createdAt"] %></td>
+        <td><%= pull_request["state"] %></td>
+        <td><%= pull_request["merged"] %></td>
+        <td><%= pull_request["mergedAt"] %></td>
+        <td><%= pull_request["closed"] %></td>
+        <td><%= pull_request["closedAt"] %></td>
+        <td><a href="<%= pull_request["url"] %>"><%= pull_request["url"] %></a></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <h2>Last 50 Pull Request Reviews</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Repository</th>
+      <th>Pull Request Title</th>
+      <th>Author</th>
+      <th>Body</th>
+      <th>State</th>
+      <th>Comments</th>
+      <th>Created At</th>
+      <th>URL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @contributions["pullRequestReviewContributions"]["nodes"].each do |contribution| %>
+      <% review = contribution["pullRequestReview"] %>
+      <tr>
+        <td><%= review["repository"]["name"] %></td>
+        <td><%= review["pullRequest"]["title"] %></td>
+        <td><%= review["pullRequest"]["author"]["login"] %></td>
+        <td><%= review["body"] %></td>
+        <td><%= review["state"] %></td>
+        <td><%= review["comments"]["nodes"].size %></td>
+        <td><%= review["createdAt"] %></td>
+        <td><a href="<%= review["url"] %>"><%= review["url"] %></a></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No contributions found.</p>
+<% end %>

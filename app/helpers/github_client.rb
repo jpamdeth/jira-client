@@ -44,29 +44,33 @@ class GithubClient
     results
   end
 
-  def self.fetch_all_graphql(query, path)
-    first_page = query.gsub("__AFTER__", "")
-    response = GithubClient.connection.post("/graphql", query: first_page)
+  def self.fetch_graphql(query, path)
+    response = GithubClient.connection.post("/graphql", query: query)
+    if response.success?
+      result = response.body.dig("data", *path)
+      result
+    else
+      raise "Failed to fetch data: #{response.status}"
+    end
+  end
 
+  def self.fetch_all_graphql(query, path)
+    cursor = ""
     results = []
 
-    if response.success?
-      page_info = GithubClient.find_page_info(response.body)
-      results.concat(response.body.dig("data", *path))
+    loop do
+      page = query.gsub("__AFTER__", cursor)
+      response = GithubClient.connection.post("/graphql", query: page)
 
-      while page_info[:has_next_page]
-        next_page = query.gsub("__AFTER__", page_info[:end_cursor])
-        response = GithubClient.connection.post("/graphql", query: next_page)
-
-        if response.success?
-          page_info = GithubClient.find_page_info(response.body)
-          results.concat(response.body.dig("data", *path))
-        else
-          raise "Failed to fetch page: #{response.status}"
-        end
+      if response.success?
+        result = response.body.dig("data", *path)
+        results.concat(result)
+        page_info = GithubClient.find_page_info(response.body)
+        cursor = page_info[:end_cursor]
+        break unless page_info[:has_next_page]
+      else
+        raise "Failed to fetch data: #{response.status}"
       end
-    else
-      raise "Failed to fetch page: #{response.status}"
     end
 
     results
