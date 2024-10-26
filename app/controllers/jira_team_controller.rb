@@ -106,7 +106,7 @@ class JiraTeamController < ApplicationController
         all_issues = []
 
         loop do
-          issues = JIRA_CLIENT.Issue.jql(jql, fields: %w[summary assignee issuetype priority resolutiondate resolution customfield_10004 customfield_19880 customfield_19971], start_at: start_at, max_results: max_results)
+          issues = JIRA_CLIENT.Issue.jql(jql, fields: %w[summary assignee issuetype parent priority resolutiondate resolution customfield_10004 customfield_19880 customfield_19971], start_at: start_at, max_results: max_results)
           all_issues.concat(issues)
           break if issues.size < max_results || all_issues.size >= 1000
           start_at += max_results

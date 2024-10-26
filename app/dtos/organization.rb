@@ -40,4 +40,14 @@ class Organization
       end
     end
   end
+
+  def self.fetch_team(team, org = "zendesk")
+    members = []
+    response = GithubClient.fetch_all_pages("/orgs/#{org}/teams/#{team}/members")
+    response.map do |member_info|
+      member = Member.fetch(member_info["login"])
+      members << member
+    end
+    members
+  end
 end

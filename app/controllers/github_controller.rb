@@ -1,4 +1,9 @@
 class GithubController < ApplicationController
+
+  def index
+    render :github_form
+  end
+
   def repo
     begin
       name = params[:repo]
@@ -10,17 +15,22 @@ class GithubController < ApplicationController
   end
 
   def team
-    begin
-      team = params[:team]
-      @members = Member.fetch_team(team)
-    rescue => e
-      @error = e.message
+    if params[:team].blank?
+      render :team_form
+    else
+      begin
+        team = params[:team]
+        @members = Organization.fetch_team(team)
+      rescue => e
+        @error = e.message
+      end
     end
   end
 
   def contributions
     begin
       login = params[:login]
+      @name = Member.fetch(login).name
       @contributions = Member.fetch_contributions(login)
     rescue => e
       @error = e.message

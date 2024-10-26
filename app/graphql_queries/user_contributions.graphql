@@ -6,16 +6,13 @@ query {
         nodes {
           pullRequest {
             title
+            number
             repository {
               name
             }
             changedFiles
-            files(first: 100) {
-              nodes {
-                additions
-                deletions
-              }
-            }
+            additions
+            deletions
             isDraft
             reviewDecision
             createdAt
@@ -36,13 +33,15 @@ query {
             }
             pullRequest {
               title
+              number
+              url
               author {
                 login
               }
             }
             body
             state
-            comments(first: 10) {
+            comments(first: 30) {
               nodes {
                 body
                 url

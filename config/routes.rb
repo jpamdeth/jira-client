@@ -14,10 +14,11 @@ Rails.application.routes.draw do
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
-  resources :jira_issues, only: [ :index, :show, :new, :create ]
+  resources :github, only: [ :index ]
+  resources :jira_issues, only: [ :index, :show ]
   resources :jira_filters, only: [ :index, :show ]
   resources :jira_team, only: [ :index, :show ]
 
   # Defines the root path route ("/")
-  root "jira_team#index"
+  root 'application#home'
 end

@@ -1,0 +1,30 @@
+<h1>Discover Jira and GitHub Metrics</h1>
+<h3><%= link_to 'Jira Issue Search', jira_team_index_path %></h3>
+Search for Jira tickets by team, status and date range.
+<h3>Jira Team Velocity Data</h3>
+Tabular view of 'resolved:done' Jira tickets for the last 168 days in two week increments.
+<%= form_with url: jira_team_velocity_path, method: :get do %>
+    <div>
+      <%= label_tag :project_key, "Jira Team Name:" %>
+      <%= text_field_tag :project_key %>
+      <%= submit_tag "Submit" %>
+    </div>
+  <% end %>
+<h3>GitHub Branches for a Repository</h3>
+See last commit date, committer and employee status for all branches of a GitHub repository.
+<%= form_with url: github_repo_path, method: :get do %>
+  <div>
+    <%= label_tag :repo, "Repository Name:" %>
+    <%= text_field_tag :repo %>
+    <%= submit_tag "Submit" %>
+  </div>
+<% end %>
+<h3>GitHub Team Contributions</h3>
+View the pull request and review activity for members of a GitHub team.
+<%= form_with url: github_team_url, method: :get do %>
+  <div>
+    <%= label_tag :team, "GitHub Team Name:" %>
+    <%= text_field_tag :team %>
+    <%= submit_tag "Submit" %>
+  </div>
+<% end %>

@@ -1,12 +1,48 @@
 <h1>Tickets Closed in 14-Day Buckets</h1>
 
 <% if @buckets.present? %>
+  <style>
+      table {
+          border-collapse: collapse;
+          border-spacing: 0;
+      }
+      th {
+          padding: 5px;
+      }
+      td {
+          border: 1px solid;
+          padding: 5px;
+      }
+      .no-border {
+          border: none;
+      }
+      .summary {
+          font-size: 1.1em; /* Adjust the font size as needed */
+          font-weight: bold;
+      }
+  </style>
+  <table>
+    <thead>
+    <tr>
+      <th>Issue</th>
+      <th>Resolution Date</th>
+      <th>Story Points</th>
+      <th>Summary</th>
+      <th>Parent</th>
+    </tr>
+    </thead>
+    <tbody>
   <% total_tickets = 0 %>
   <% @buckets.each do |end_date, issues| %>
     <% total_tickets += issues.size %>
     <% total_points = 0 %>
     <% unpointed_tickets = 0 %>
+    <% unassigned_tickets = 0 %>
     <% issues.each do |issue| %>
+      <% assignee = issue.fields['assignee'] %>
+      <% if assignee.nil? %>
+        <% unassigned_tickets += 1 %>
+      <% end %>
       <% story_points = issue.fields['customfield_10004'].presence || "unpointed" %>
       <% if story_points == "unpointed" %>
         <% unpointed_tickets += 1 %>
@@ -14,18 +50,29 @@
         <% total_points += story_points.to_i %>
       <% end %>
     <% end %>
-    <h2>End Date: <%= end_date.strftime('%m/%d/%Y') %> - Total Tickets: <%= issues.size %> - Total Points: <%= total_points %> - Unpointed Tickets: <%= unpointed_tickets %></h2>
-    <ul>
+        <tr>
+          <td class="no-border summary" colspan="4">End Date: <%= end_date.strftime('%m/%d/%Y') %> - Total Tickets: <%= issues.size %> - Total Points: <%= total_points %> - Unpointed Tickets: <%= unpointed_tickets %> - Unassigned Tickets: <%= unassigned_tickets %></td>
+        </tr>
       <% issues.each do |issue| %>
-        <li>
-          <strong>Issue ID:</strong> <%= issue.id %> -
-          <strong>Resolution Date:</strong> <%= Date.parse(issue.fields['resolutiondate']).strftime('%m/%d/%Y') %> -
-          <strong>Story Points:</strong> <%= issue.fields['customfield_10004'].presence || "unpointed" %> -
-          <strong>Summary:</strong> <%= issue.fields['summary'] %>
-        </li>
+        <tr>
+          <td><%= link_to issue.key, "#{ENV['JIRA_SITE']}/browse/#{issue.key}", target: "_blank" %></td>
+          <td><%= Date.parse(issue.fields['resolutiondate']).strftime('%m/%d/%Y') %></td>
+          <td><%= issue.fields['customfield_10004'].presence || "-" %></td>
+          <td><%= issue.fields['summary'] %></td>
+          <td>
+            <% if issue.fields['parent'].present? %>
+              <%= issue.fields['parent']&.dig('fields', 'summary')&.truncate(30) %>
+              (<%= link_to issue.fields['parent']&.dig('fields', 'issuetype', 'name'), "#{ENV['JIRA_SITE']}/browse/#{issue.fields['parent']&.dig('key')}", target: "_blank" %>)
+            <% end %>
+          </td>
+        </tr>
       <% end %>
-    </ul>
+      <tr>
+        <td class="no-border" colspan="4">&nbsp;</td>
+      </tr>
   <% end %>
+  </tbody>
+  </table>
   <h2>Total Tickets Across All Buckets: <%= total_tickets %></h2>
 <% else %>
   <p>No tickets found.</p>

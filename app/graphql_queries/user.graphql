@@ -1,6 +1,7 @@
 query {
   user (login: "__LOGIN__") {
     name
+    login
     id
     url
   }
