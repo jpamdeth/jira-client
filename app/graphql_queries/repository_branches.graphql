@@ -7,23 +7,31 @@ query {
       }
       edges {
         node {
+          associatedPullRequests(first: 20) {
+           nodes {
+              title
+              number
+              state
+              url
+            }
+          }
           name
+          compare (headRef: "__DEFAULT__") {
+            aheadBy
+            behindBy
+          }
           target {
             ... on Commit {
               history(first: 1) {
                 edges {
                   node {
-                    associatedPullRequests (first: 20) {
-                      nodes {
-                        state
-                        mergedAt
-                      }
-                    }
                     committer {
                       name
                       email
                       user {
+                        name
                         login
+                        email
                       }
                     }
                     committedDate

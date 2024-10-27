@@ -51,12 +51,12 @@
       <% end %>
     <% end %>
         <tr>
-          <td class="no-border summary" colspan="4">End Date: <%= end_date.strftime('%m/%d/%Y') %> - Total Tickets: <%= issues.size %> - Total Points: <%= total_points %> - Unpointed Tickets: <%= unpointed_tickets %> - Unassigned Tickets: <%= unassigned_tickets %></td>
+          <td class="no-border summary" colspan="4">End Date: <%= end_date.strftime("%Y-%m-%d") %> - Total Tickets: <%= issues.size %> - Total Points: <%= total_points %> - Unpointed Tickets: <%= unpointed_tickets %> - Unassigned Tickets: <%= unassigned_tickets %></td>
         </tr>
       <% issues.each do |issue| %>
         <tr>
           <td><%= link_to issue.key, "#{ENV['JIRA_SITE']}/browse/#{issue.key}", target: "_blank" %></td>
-          <td><%= Date.parse(issue.fields['resolutiondate']).strftime('%m/%d/%Y') %></td>
+          <td><%= Date.parse(issue.fields['resolutiondate']).strftime("%Y-%m-%d") %></td>
           <td><%= issue.fields['customfield_10004'].presence || "-" %></td>
           <td><%= issue.fields['summary'] %></td>
           <td>

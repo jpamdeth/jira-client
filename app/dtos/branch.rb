@@ -1,6 +1,6 @@
 # app/dtos/branch.rb
 class Branch
-  attr_accessor :name, :repo, :owner, :author_email, :commit_date, :employee, :pull_requests
+  attr_accessor :name, :repo, :owner, :author_email, :last_committer, :last_commit_date, :employee, :pull_requests, :ahead, :behind, :open_pr
 
   def initialize(name: nil, repo: nil, owner: "zendesk")
     @name = name
@@ -19,7 +19,7 @@ class Branch
         branch.repo = repo
         branch.owner = owner
         branch.author_email = branch_data["commit"]["commit"]["author"]["email"]
-        branch.commit_date = branch_data["commit"]["commit"]["author"]["date"]
+        branch.last_commit_date = branch_data["commit"]["commit"]["author"]["date"]
         branch
       else
         raise "Invalid branch data"

@@ -36,10 +36,10 @@
         <td><%= pull_request["deletions"] %></td>
         <td><%= pull_request["isDraft"] %></td>
         <td><%= pull_request["reviewDecision"] %></td>
-        <td><%= DateTime.parse(pull_request["createdAt"]).strftime("%m/%d/%Y") %></td>
+        <td><%= DateTime.parse(pull_request["createdAt"]).strftime("%Y-%m-%d") %></td>
         <td><%= pull_request["state"] %></td>
-        <td><%= pull_request["mergedAt"] ? DateTime.parse(pull_request["mergedAt"]).strftime("%m/%d/%Y") : "" %></td>
-        <td><%= pull_request["closedAt"] ? DateTime.parse(pull_request["closedAt"]).strftime("%m/%d/%Y") : "" %></td>
+        <td><%= pull_request["mergedAt"] ? DateTime.parse(pull_request["mergedAt"]).strftime("%Y-%m-%d") : "" %></td>
+        <td><%= pull_request["closedAt"] ? DateTime.parse(pull_request["closedAt"]).strftime("%Y-%m-%d") : "" %></td>
         <td><a target="_blank" href="<%= pull_request["url"] %>"><%= pull_request["number"]%></a></td>
       </tr>
     <% end %>
@@ -70,7 +70,7 @@
         <td><%= review["body"] %></td>
         <td><%= review["state"] %></td>
         <td><%= review["comments"]["nodes"].size %></td>
-        <td><%= DateTime.parse(review["createdAt"]).strftime("%m/%d/%Y") %></td>
+        <td><%= DateTime.parse(review["createdAt"]).strftime("%Y-%m-%d") %></td>
         <td><a target="_blank" href="<%= review["pullRequest"]["url"] %>"><%= review["pullRequest"]["number"] %></a></td>
       </tr>
     <% end %>
