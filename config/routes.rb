@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   get "github/repo"
   get "github/team"
-  get 'github/contributions', to: 'github#contributions', as: :contributions
-  get "jira_team/stats"
+  get "github/contributions", to: "github#contributions", as: :contributions
   get "jira_team/velocity"
+  get "application/home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -15,10 +15,8 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   resources :github, only: [ :index ]
-  resources :jira_issues, only: [ :index, :show ]
-  resources :jira_filters, only: [ :index, :show ]
-  resources :jira_team, only: [ :index, :show ]
+  resources :jira_team, only: [ :index ]
 
   # Defines the root path route ("/")
-  root 'application#home'
+  root "application#home"
 end

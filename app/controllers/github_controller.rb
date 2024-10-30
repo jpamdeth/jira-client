@@ -5,13 +5,11 @@ class GithubController < ApplicationController
   end
 
   def repo
-    begin
-      name = params[:repo]
-      @repo = Repository.new(name: name).fetch_from_github
-      @branches = @repo.fetch_branches_graphql
-    rescue => e
-      @error = e.message
-    end
+    name = params[:repo]
+    @repo = Repository.new(name: name).fetch_from_github
+    @branches = @repo.fetch_branches_graphql
+  rescue => e
+    @error = e.message
   end
 
   def team
@@ -28,12 +26,16 @@ class GithubController < ApplicationController
   end
 
   def contributions
-    begin
-      login = params[:login]
-      @name = Member.fetch(login).name
-      @contributions = Member.fetch_contributions(login)
-    rescue => e
-      @error = e.message
+    if params[:login].blank?
+      render :contributions_form
+    else
+      begin
+        login = params[:login]
+        @name = Member.fetch(login).name
+        @contributions = Member.fetch_contributions(login)
+      rescue => e
+        @error = e.message
+      end
     end
   end
 end

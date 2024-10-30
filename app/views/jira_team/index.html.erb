@@ -23,7 +23,7 @@
 <%= form_with url: jira_team_index_path, method: :get, local: true, html: { class: 'inline-form' } do %>
   <div>
     <label for="project_key">Project:</label>
-    <%= select_tag :project_key, options_for_select([%w[Support-views Support-views], %w[Ingest Ingest], %w[Support-Views-UI Support-Views-UI]], params[:project_key]), multiple: true %>
+    <%= select_tag :project_key, options_for_select(@recent_projects.map { |project| [project['name'], project['key']] }, params[:project_key]), multiple: true %>
   </div>
   <div>
     <label for="status">Status:</label>
@@ -128,7 +128,7 @@
     <tr>
       <td><%= issue.assignee&.displayName %></td>
       <td><%= issue.issuetype.name %></td>
-      <td><%= link_to issue.key, jira_team_path(issue.key) %></td>
+      <td><%= link_to issue.key, "#{ENV['JIRA_SITE']}/browse/#{issue.key}", target: "_blank" %></td>
       <td><%= issue.summary %></td>
       <td><%= issue.priority.name %></td>
       <td><%= issue.status.name %></td>

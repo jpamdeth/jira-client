@@ -1,8 +1,6 @@
 require "set"
 
 class Organization
-  @instance = nil
-
   private_class_method :new
 
   attr_accessor :name, :members, :members_file_path
@@ -42,12 +40,7 @@ class Organization
   end
 
   def self.fetch_team(team, org = "zendesk")
-    members = []
     response = GithubClient.fetch_all_pages("/orgs/#{org}/teams/#{team}/members")
-    response.map do |member_info|
-      member = Member.fetch(member_info["login"])
-      members << member
-    end
-    members
+    response.map { |member_info| Member.fetch(member_info["login"]) }
   end
 end
