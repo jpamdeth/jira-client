@@ -4,10 +4,18 @@ class GithubController < ApplicationController
     render :github_form
   end
 
-  def repo
+  def branches
     name = params[:repo]
     @repo = Repository.new(name: name).fetch_from_github
-    @branches = @repo.fetch_branches_graphql
+    @branches = @repo.fetch_branches
+  rescue => e
+    @error = e.message
+  end
+
+  def pulls
+    name = params[:repo]
+    @repo = Repository.new(name: name).fetch_from_github
+    @pulls = @repo.fetch_pull_requests
   rescue => e
     @error = e.message
   end

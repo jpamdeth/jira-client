@@ -1,0 +1,45 @@
+<% if @error %>
+  <p style="color: red;"><%= @error %></p>
+<% else %>
+  <h1>Github Pull Request Information for: <%= link_to @repo.name, @repo.html_url, target: "_blank" %></h1>
+  <style>
+      table, th, td {
+          border: 1px solid;
+          border-collapse: collapse;
+          padding: 5px;
+      }
+      th {
+          cursor: pointer;
+      }
+  </style>
+  <table id="pulls-table">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Created At</th>
+      <th>Updated At</th>
+      <th>Commits</th>
+      <th>Additions</th>
+      <th>Deletions</th>
+      <th>Changed Files</th>
+      <th>Employee?</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @pulls.each do |pull| %>
+      <tr>
+        <td><%= link_to pull.title, pull.url, target: "_blank" %></td>
+        <td><%= pull.author_login %></td>
+        <td><%= DateTime.parse(pull.created_at).strftime("%Y-%m-%d") %></td>
+        <td><%= DateTime.parse(pull.updated_at).strftime("%Y-%m-%d") %></td>
+        <td><%= pull.commits %></td>
+        <td><%= pull.additions %></td>
+        <td><%= pull.deletions %></td>
+        <td><%= pull.changed_files %></td>
+        <td><%= pull.employee %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>

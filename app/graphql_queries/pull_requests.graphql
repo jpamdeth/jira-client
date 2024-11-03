@@ -1,0 +1,38 @@
+{
+  repository(owner: "__OWNER__", name: "__NAME__") {
+    pullRequests(first: 20, after: "__AFTER__", states: OPEN, orderBy: {direction: ASC, field: CREATED_AT}) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      totalCount
+      nodes {
+        headRefName
+        number
+        title
+        author {
+          login
+        }
+        url
+        createdAt
+        updatedAt
+        changedFiles
+        additions
+        deletions
+        commits(first: 60, after: "") {
+          totalCount
+          nodes {
+            commit {
+              author {
+                user {
+                  login
+                }
+              }
+              committedDate
+            }
+          }
+        }
+      }
+    }
+  }
+}

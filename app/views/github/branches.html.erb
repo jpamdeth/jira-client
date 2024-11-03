@@ -1,0 +1,65 @@
+<% if @error %>
+  <p style="color: red;"><%= @error %></p>
+<% else %>
+  <h1>Github Branch Information for: <%= link_to @repo.name, @repo.html_url, target: "_blank" %></h1>
+  <style>
+      table, th, td {
+          border: 1px solid;
+          border-collapse: collapse;
+          padding: 5px;
+      }
+      th {
+          cursor: pointer;
+      }
+  </style>
+  <table id="branches-table">
+    <thead>
+    <tr>
+      <th onclick="sortTable(0)">Name</th>
+      <th onclick="sortTable(1)">Last Commit By</th>
+      <th onclick="sortTable(2)">Commit Date</th>
+      <th>Ahead</th>
+      <th>Behind</th>
+      <th>Open PR</th>
+      <th>Employee</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @branches.each do |branch| %>
+      <tr>
+        <td><%= link_to branch.name, @repo.html_url + "/tree/" + branch.name, target: "_blank" %></td>
+        <td><%= branch.last_committer %></td>
+        <td><%= DateTime.parse(branch.last_commit_date).strftime("%Y-%m-%d") %></td>
+        <td><%= branch.ahead %></td>
+        <td><%= branch.behind %></td>
+        <td>
+          <% if branch.open_pr.present? %>
+            <%= link_to branch.open_pr["number"], branch.open_pr["url"], target: "_blank" %>
+          <% end %>
+        </td>
+        <td><%= branch.employee %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <script>
+      function sortTable(columnIndex) {
+          const table = document.getElementById("branches-table");
+          const rows = Array.from(table.rows).slice(1);
+          const isNumericColumn = columnIndex === 2 || columnIndex === 3 || columnIndex === 4;
+
+          rows.sort((rowA, rowB) => {
+              const cellA = rowA.cells[columnIndex].innerText;
+              const cellB = rowB.cells[columnIndex].innerText;
+
+              if (isNumericColumn) {
+                  return parseFloat(cellA) - parseFloat(cellB);
+              } else {
+                  return cellA.localeCompare(cellB);
+              }
+          });
+
+          rows.forEach(row => table.appendChild(row));
+      }
+  </script>
+<% end %>

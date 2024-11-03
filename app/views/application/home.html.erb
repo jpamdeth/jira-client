@@ -1,9 +1,9 @@
 <h1>Discover Jira and GitHub Metrics</h1>
-<h3><%= link_to 'Jira Issue Search', jira_team_index_path %></h3>
+<h3><%= link_to 'Jira Issue Search', jira_index_path %></h3>
 Search for Jira tickets by team, status and date range.
 <h3>Jira Team Velocity Data</h3>
 Tabular view of 'resolved:done' Jira tickets for the last 168 days in two week increments.
-<%= form_with url: jira_team_velocity_path, method: :get do %>
+<%= form_with url: jira_velocity_path, method: :get do %>
     <div>
       <%= label_tag :project_key, "Jira Team Name:" %>
       <%= select_tag :project_key, options_for_select(@recent_projects.map { |project| [project['name'], project['key']] }, params[:project_key]) %>
@@ -12,7 +12,16 @@ Tabular view of 'resolved:done' Jira tickets for the last 168 days in two week i
   <% end %>
 <h3>GitHub Branches for a Repository</h3>
 See last commit date, committer and employee status for all branches of a GitHub repository.
-<%= form_with url: github_repo_path, method: :get do %>
+<%= form_with url: github_branches_path, method: :get do %>
+  <div>
+    <%= label_tag :repo, "Repository Name:" %>
+    <%= text_field_tag :repo %>
+    <%= submit_tag "Submit" %>
+  </div>
+<% end %>
+<h3>GitHub Pull Requests for a Repository</h3>
+See information for all open pull requests of a GitHub repository.
+<%= form_with url: github_pulls_path, method: :get do %>
   <div>
     <%= label_tag :repo, "Repository Name:" %>
     <%= text_field_tag :repo %>

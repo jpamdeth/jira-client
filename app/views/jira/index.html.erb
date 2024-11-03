@@ -1,0 +1,144 @@
+<h1>Issues</h1>
+<% if @error %>
+  <p style="color: red;"><%= @error %></p>
+<% end %>
+<style>
+    table, th, td {
+        border: 1px solid;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+    .inline-form div {
+        display: inline-block;
+        margin-right: 10px;
+        vertical-align: top;
+        margin-bottom: 15px;
+    }
+    .inline-form label {
+        display: block;
+        vertical-align: top;
+    }
+</style>
+
+<%= form_with url: jira_index_path, method: :get, local: true, html: { class: 'inline-form' } do %>
+  <div>
+    <label for="project_key">Project:</label>
+    <%= select_tag :project_key, options_for_select(@recent_projects.map { |project| [project['name'], project['key']] }, params[:project_key]), multiple: true %>
+  </div>
+  <div>
+    <label for="status">Status:</label>
+    <%= select_tag :status, options_for_select([['To Do', 'To Do'], ['In Progress', 'In Progress'], %w[Resolved Resolved], %w[Blocked Blocked]], params[:status]), multiple: true, id: 'status' %>
+  </div>
+  <div id="resolution-container" class="hidden">
+    <label for="resolution">Resolution:</label>
+    <%= select_tag :resolution, options_for_select([['Done', 'Done'], ['Cancelled', 'Cancelled '], ["Won't Do", "Won't Do"]], params[:resolution]), multiple: true, id: 'resolution' %>
+  </div>
+  <div>
+    <label for="created">Created:</label>
+    <%= select_tag :created, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:created]) %>
+  </div>
+  <div>
+    <label for="updated">Updated:</label>
+    <%= select_tag :updated, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:updated]) %>
+  </div>
+  <div>
+    <label for="resolved">Resolved:</label>
+    <%= select_tag :resolved, options_for_select([['Any', 'Any'], ['14', '14'], ['30', '30'], ['60', '60'], ['90', '90']], params[:resolved]), id: 'resolved' %>
+  </div>
+  <div>
+    <label for="unassigned">Unassigned</label>
+    <%= check_box_tag :unassigned, '1', params[:unassigned] == '1' %>
+  </div>
+  <div>
+    <label for="unpointed">Unpointed</label>
+    <%= check_box_tag :unpointed, '1', params[:unpointed] == '1' %>
+  </div>
+  <div>
+    <%= submit_tag "Search" %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('status');
+    const resolvedSelect = document.getElementById('resolved');
+
+    function toggleResolvedSelect() {
+      const selectedOptions = Array.from(statusSelect.selectedOptions).map(option => option.value);
+      resolvedSelect.disabled = !selectedOptions.includes('Resolved');
+    }
+
+    statusSelect.addEventListener('change', toggleResolvedSelect);
+    toggleResolvedSelect(); // Initial check
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const statusSelect = document.getElementById('status');
+      const resolutionContainer = document.getElementById('resolution-container');
+
+      function toggleResolutionContainer() {
+          const selectedOptions = Array.from(statusSelect.selectedOptions).map(option => option.value);
+          if (selectedOptions.includes('Resolved')) {
+              resolutionContainer.classList.remove('hidden');
+          } else {
+              resolutionContainer.classList.add('hidden');
+          }
+      }
+
+      statusSelect.addEventListener('change', toggleResolutionContainer);
+      toggleResolutionContainer(); // Initial check
+  });
+</script>
+<% unless @issues.nil? %>
+<p>Total Issues: <%= @issues.size %></p>
+<table>
+  <tr>
+    <th>Assignee</th>
+    <th>Type</th>
+    <th>Key</th>
+    <th>Summary</th>
+    <th>Priority</th>
+    <th>Status</th>
+    <th>Resolution</th>
+    <th>Story Points</th>
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th>Elapsed Time</th>
+    <th>Miss</th>
+  </tr>
+
+  <% @issues.each do |issue|
+    if issue.customfield_19880.present? && issue.customfield_19971.present?
+      start_date = Date.parse(issue.customfield_19880)
+      end_date = Date.parse(issue.customfield_19971)
+      duration = 0
+
+      while start_date < end_date
+        unless start_date.saturday? || start_date.sunday?
+          duration += 1
+        end
+        start_date += 1
+      end
+
+      if issue.customfield_10004.present?
+        miss = duration - issue.customfield_10004
+      end
+    end
+  %>
+    <tr>
+      <td><%= issue.assignee&.displayName %></td>
+      <td><%= issue.issuetype.name %></td>
+      <td><%= link_to issue.key, "#{ENV['JIRA_SITE']}/browse/#{issue.key}", target: "_blank" %></td>
+      <td><%= issue.summary %></td>
+      <td><%= issue.priority.name %></td>
+      <td><%= issue.status.name %></td>
+      <td><%= issue.resolution&.dig("name") %></td>
+      <td><%= issue.customfield_10004 %></td>
+      <td><%= issue.customfield_19880 %></td>
+      <td><%= issue.customfield_19971 %></td>
+      <td><%= duration %></td>
+      <td><%= miss %></td>
+    </tr>
+  <% end %>
+</table>
+<% end %>

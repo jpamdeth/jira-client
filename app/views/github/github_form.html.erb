@@ -2,8 +2,8 @@
 Enter GitHub repo name to view its branches.
 <%= form_with url: github_repo_path, method: :get do %>
   <div>
-    <%= label_tag :repo, "Repo Name:" %>
-    <%= text_field_tag :repo %>
+    <%= label_tag :branches, "Repo Name:" %>
+    <%= text_field_tag :branches %>
     <%= submit_tag "Submit" %>
   </div>
 <% end %>

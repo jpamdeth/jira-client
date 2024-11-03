@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
-  get "github/repo"
+  get "github/branches"
+  get "github/pulls"
   get "github/team"
   get "github/contributions", to: "github#contributions", as: :contributions
-  get "jira_team/velocity"
+  get "jira/velocity"
   get "application/home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -15,7 +16,7 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   resources :github, only: [ :index ]
-  resources :jira_team, only: [ :index ]
+  resources :jira, only: [ :index ]
 
   # Defines the root path route ("/")
   root "application#home"
